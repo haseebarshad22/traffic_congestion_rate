@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/plugins/CongestionRate" >
+        <file>icon.png</file>
+    </qresource>
+</RCC>
