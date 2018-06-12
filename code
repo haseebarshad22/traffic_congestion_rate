@@ -1,0 +1,49 @@
+import requests
+import googlemaps
+from datetime import datetime
+from datetime import timedelta
+import matplotlib.pyplot as plt
+
+
+
+def location(location,city):
+      api_key='AIzaSyCLpZPtZUu-h9NBuHVd9HgkC6EHuP64Ud4'
+      google='https://maps.googleapis.com/maps/api/geocode/json?address='
+      url=google+location+','+city+'&key='+api_key
+      search=requests.get(url)
+      search_json=search.json()
+      coords=search_json['results'][0]['geometry']['location']
+      return coords
+
+
+api_key='AIzaSyCLpZPtZUu-h9NBuHVd9HgkC6EHuP64Ud4'
+gmaps = googlemaps.Client(key=api_key)
+origin=input(str("Enter your current location : "))
+destination=input(str("Enter your destination : "))
+city=input(str("Enter your city : "))
+
+
+now = datetime.now()
+stop=now+ timedelta(hours=12) 
+orig_coord = location(origin,city)
+dest_coord = location(destination,city)
+origin=str(orig_coord["lat"])+", "+str(orig_coord["lng"])
+destination=str(dest_coord["lat"])+", "+str(dest_coord["lng"])
+trip_duration=[]
+dates=[]
+
+while now < stop:
+    directions_result = gmaps.directions(origin,
+                                     destination,
+                                     mode="driving",
+                                     avoid="ferries",
+                                     departure_time=now,
+                                     traffic_model="pessimistic"
+                                    )
+    trip=int(directions_result[0]['legs'][0]['duration_in_traffic']['value'])/60
+    trip_duration.append(trip)
+    dates.append(now)
+    now = now + timedelta(minutes=10)
+    
+ 
+plt.plot(dates, trip_duration) 
